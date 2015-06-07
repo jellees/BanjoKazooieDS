@@ -12,95 +12,63 @@
 
 void updatePlayer(struct PLAYER * player, struct CAMERA * camera)
 {
-	/*scanKeys();
-	
-	int hold = keysHeld();
-	
-	player->yPos = -500;
-
-	if (hold & KEY_LEFT)
-	{
-		player->xPos += sinLerp(cameraRotation +  8191) / 100;
-		player->zPos += cosLerp(cameraRotation +  8191) / 100;
-	}
-	if (hold & KEY_RIGHT)
-	{
-		player->xPos -= sinLerp(cameraRotation +  8191) / 100;
-		player->zPos -= cosLerp(cameraRotation +  8191) / 100;
-		player->yRot += 100;
-	}
-	if (hold & KEY_UP)
-	{
-		player->xPos += sinLerp(cameraRotation) / 100;
-		player->zPos += cosLerp(cameraRotation) / 100;
-	}
-	if (hold & KEY_DOWN)
-	{
-		player->xPos -= sinLerp(cameraRotation) / 100;
-		player->zPos -= cosLerp(cameraRotation) / 100;
-	}
-	
-	if (hold & KEY_LEFT)
-	{
-		player->xPos += (player->zPos - 0) / 50;
-		player->zPos += -(player->xPos - 0) / 50;
-	}
-	if (hold & KEY_RIGHT)
-	{
-		player->xPos -= (player->zPos - 0) / 50;
-		player->zPos -= -(player->xPos - 0) / 50;
-	}
-	if (hold & KEY_UP)
-	{
-		player->xPos += (player->xPos - 0) / 50;
-		player->zPos += (player->zPos - 0) / 50;
-	}
-	if (hold & KEY_DOWN)
-	{
-		player->xPos -= (player->xPos - 0) / 50;
-		player->zPos -= (player->zPos - 0) / 50;
-	}*/
-	
 	scanKeys();
 	int hold = keysHeld();
 
 	player->yPos = -500;
-
-	int xCam = camera->xPos;
-	int zCam = camera->zPos;
 	
 	int vec[3];
-	vec[0] = (player->xPos - xCam);
+	vec[0] = (2000 * sinLerp(camera->yRot)) / 4096;
 	vec[1] = 0;
-	vec[2] = (player->zPos - zCam);
+	vec[2] = (2000 * cosLerp(camera->yRot)) / 4096;
 
 	if(!(vec[0] == 0 && vec[1] == 0 && vec[2] == 0))
 		normalizef32(&vec[0]);
 
-		printf("%d, %d\n", xCam, zCam);
+	//printf("%d, %d\n", xCam, zCam);
 	printf("%d, %d\n", vec[0], vec[2]);
 
 	if (hold & KEY_LEFT)
 	{
-		player->xPos += vec[2] * 25 / 4096;
-		player->zPos += -vec[0] * 25 / 4096;
-		player->yRot = 8191;
+		player->yRot += degreesToAngle(1);
+		player->xPos += vec[0] * 15/ 4096;
+		player->zPos += vec[2] * 15/ 4096;
 	}
 	if (hold & KEY_RIGHT)
 	{
-		player->xPos -= vec[2] * 25 / 4096;
-		player->zPos -= -vec[0] * 25 / 4096;
-		player->yRot = -8191;
+		player->yRot -= degreesToAngle(1);
+		player->xPos += vec[0] * 15/ 4096;
+		player->zPos += vec[2] * 15/ 4096;
 	}
 	if (hold & KEY_UP)
 	{
-		player->xPos += vec[0] * 25 / 4096;
-		player->zPos += vec[2] * 25 / 4096;
+			player->xPos += vec[0] * 20/ 4096;
+			player->zPos += vec[2] * 20/ 4096;
+			//not 100% correct, because when you press up and left together, you will not rotate!
+			if(abs(player->yRot - camera->yRot) < 150) player->yRot = camera->yRot;
+			else
+			{
+				if(camera->yRot > player->yRot) player->yRot += 150;
+				if(camera->yRot < player->yRot) player->yRot -= 150;
+			}
+			//player->yRot = camera->yRot;
 	}
 	if (hold & KEY_DOWN)
 	{
-		player->xPos -= vec[0] * 25 / 4096;
-		player->zPos -= vec[2] * 25 / 4096;
+		player->xPos -= vec[0] * 20/ 4096;
+		player->zPos -= vec[2] * 20/ 4096;
+		if(abs(player->yRot - camera->yRot) < 150) player->yRot = camera->yRot;
+	else
+	{
+		if(camera->yRot > player->yRot) player->yRot += 150;
+		if(camera->yRot < player->yRot) player->yRot -= 150;
+	}
+		/*if(abs(player->yRot - (degreesToAngle(180) - camera->yRot)) < 300) player->yRot = (degreesToAngle(180) - camera->yRot);
+	else
+	{
+		if(camera->yRot > (degreesToAngle(180) - camera->yRot)) player->yRot += 300;
+		if(camera->yRot < (degreesToAngle(180) - camera->yRot)) player->yRot -= 300;
+	}*/
 	}
 }
 
