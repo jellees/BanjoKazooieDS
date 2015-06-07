@@ -65,11 +65,17 @@ void debugCamera(struct CAMERA * camera)
 
 void playerCamera(struct CAMERA * camera, int x, int y, int z, int rotation)
 {
-	if(rotation > camera->yRot) camera->yRot += 50;
-	if(rotation < camera->yRot) camera->yRot -= 50;
+	//actually, the camera should only make large changes when the player stands still.
+	//So we need some kind of velocity value for the player
+	if(abs(camera->yRot - rotation) < 75) camera->yRot = rotation;
+	else
+	{
+		if(rotation > camera->yRot) camera->yRot += 75;
+		if(rotation < camera->yRot) camera->yRot -= 75;
+	}
 	
-	camera->xPos = 500 + sinLerp(camera->yRot) + -x;
-	camera->zPos = 500 + cosLerp(camera->yRot) + -z;
+	camera->xPos = (2000 * sinLerp(camera->yRot)) / 4096 + -x; ///*50 +*/ (2500 * sinLerp(camera->yRot)) / 4096 + -x;
+	camera->zPos = (2000 * cosLerp(camera->yRot)) / 4096 + -z;  ///*50 +*/ (2500 * cosLerp(camera->yRot)) / 4096 + -z;
 	
 	camera->xFoc = -x;
 	camera->yFoc = -y;

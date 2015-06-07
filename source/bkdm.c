@@ -233,7 +233,7 @@ int renderModel(struct MODEL * model)
 	
 	while(objectC < model->header.objectCount)
 	{
-		//glMatrixMode(GL_MODELVIEW);
+		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		
 		unsigned char mat = model->faces.object[objectC].materialID;
